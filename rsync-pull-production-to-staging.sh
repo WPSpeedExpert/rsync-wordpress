@@ -48,17 +48,6 @@ if [ ! -f ${STAGING_PATH}/wp-config.php ]; then
 fi
   echo "[+] SUCCESS: Found wp-config.php in ${STAGING_PATH}"
 
-# Make a backup of the wp-config.php file
-echo "[+] NOTICE: Backup wp-content to: ${STAGING_SCRIPT_PATH}/tmp"
-cp "${STAGING_PATH}/wp-config.php" "${STAGING_SCRIPT_PATH}/tmp"
-#
-if [ ! -f ${STAGING_SCRIPT_PATH}/tmp/wp-config.php ]; then
-  echo "[+] ERROR: No wp-config.php in ${STAGING_SCRIPT_PATH}/tmp"
-  echo ""
-  exit
-fi
-  echo "[+] SUCCESS: Found wp-config.php in ${STAGING_SCRIPT_PATH}/tmp"
-
 # Stop nginx
 # echo "[+] NOTICE: Stop Nginx."
 # sudo systemctl stop nginx
@@ -69,15 +58,6 @@ fi
 # Clean and remove destination website files (except for the wp-config.php)
 find ${STAGING_PATH}/ -mindepth 1 ! -regex '^'${STAGING_PATH}'/wp-config.php' -delete
 #
-# Copy back the wp-config.php file
-# cp "${STAGING_SCRIPT_PATH}/tmp/wp-config.php" "${STAGING_PATH}"
-#
-if [ ! -f ${STAGING_PATH}/wp-config.php ]; then
-  echo "[+] ERROR: No wp-config.php in ${STAGING_PATH}"
-  echo ""
-  exit
-fi
-  echo "[+] SUCCESS: Found wp-config.php in ${STAGING_PATH}"
 
 # Export the remote MySQL database |  ${PRODUCTION_PATH}
 echo "[+] NOTICE: Export the remote database: ${PRODUCTION_DATABASE}"
@@ -157,7 +137,6 @@ sudo systemctl restart redis-server
 # Start nginx
 # echo "[+] NOTICE: Start Nginx."
 # sudo systemctl stop nginx
-# sudo systemctl status nginx
 
 # End of the script
 echo "[+] NOTICE: End of script: ${CURRENT_DATE_TIME}"
