@@ -130,7 +130,7 @@ echo "[+] NOTICE: Set correct file permissions for files."
 find ${STAGING_PATH}/ -type f -print0 | xargs -0 chmod 00644
 
 # Flush & restart Redis
-echo "[+] NOTICE: Flush, restart and clean up Redis."
+echo "[+] NOTICE: Flush & restart Redis."
 redis-cli FLUSHALL
 sudo systemctl restart redis-server
 
