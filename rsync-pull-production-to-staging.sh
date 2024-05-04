@@ -62,7 +62,7 @@ echo "[+] NOTICE: Export the remote database: ${PRODUCTION_DATABASE}"
 # Use Cloudpanel CLI
 ssh ${PRODUCTION_SERVER_SSH} "clpctl db:export --databaseName=${PRODUCTION_DATABASE} --file=${PRODUCTION_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz"
 # Use mysqldump
-# ssh ${PRODUCTION_SERVER_SSH} "mysqldump --defaults-extra-file=${STAGING_SCRIPT_PATH}/my.cnf -D ${PRODUCTION_DATABASE} | gzip > ${PRODUCTION_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz"
+# ssh ${PRODUCTION_SERVER_SSH} "mysqldump --defaults-extra-file=${STAGING_SCRIPT_PATH}/production.cnf -D ${PRODUCTION_DATABASE} | gzip > ${PRODUCTION_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz"
 echo "[+] NOTICE: Synching the database: ${PRODUCTION_DATABASE}.sql.gz"
 rsync -azP ${PRODUCTION_SERVER_SSH}:${PRODUCTION_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz ${STAGING_SCRIPT_PATH}/tmp
 
