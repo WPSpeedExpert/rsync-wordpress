@@ -6,7 +6,7 @@
 # Requirements:       ssh-keygen - ssh-copy-id root@127.0.0.1 (replace IP)
 # Author:             WP Speed Expert
 # Author URI:         https://wpspeedexpert.com
-# Version:            0.6
+# Version:            0.7
 # Make executable:    chmod +x rsync-pull-production-to-staging.sh
 # Crontab @weekly:    0 0 * * MON /home/{PATH}/rsync-pull-production-to-staging.sh > /home/{PATH}/rsync-pull-production-to-staging.log 2>&1
 # =========================================================================== #
@@ -59,8 +59,10 @@ find ${STAGING_PATH}/ -mindepth 1 ! -regex '^'${STAGING_PATH}'/wp-config.php' -d
 
 # Export the remote MySQL database |  ${PRODUCTION_PATH}
 echo "[+] NOTICE: Export the remote database: ${PRODUCTION_DATABASE}"
+# Use Cloudpanel CLI
 ssh ${PRODUCTION_SERVER_SSH} "clpctl db:export --databaseName=${PRODUCTION_DATABASE} --file=${PRODUCTION_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz"
-#
+# Use mysqldump
+# ssh ${PRODUCTION_SERVER_SSH} "mysqldump --defaults-extra-file=${STAGING_SCRIPT_PATH}/my.cnf -D ${PRODUCTION_DATABASE} | gzip > ${PRODUCTION_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz"
 echo "[+] NOTICE: Synching the database: ${PRODUCTION_DATABASE}.sql.gz"
 rsync -azP ${PRODUCTION_SERVER_SSH}:${PRODUCTION_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz ${STAGING_SCRIPT_PATH}/tmp
 
@@ -83,8 +85,10 @@ done
 
 # Import the MySQL database:
 echo "[+] NOTICE: Import the MySQL database: ${STAGING_DATABASE} ..."
+# Use Cloudpanel CLI
 clpctl db:import --databaseName=${STAGING_DATABASE} --file=${STAGING_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz
-#
+# Use mysqldump
+# mysqldump --defaults-extra-file=${STAGING_SCRIPT_PATH}/my.cnf -D ${STAGING_DATABASE} < ${STAGING_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz
 echo "[+] NOTICE: Clean up the database export file: ${STAGING_DATABASE} ..."
 rm ${STAGING_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz
 
