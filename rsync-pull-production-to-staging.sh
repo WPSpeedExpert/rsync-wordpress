@@ -1,19 +1,17 @@
 #!/bin/bash
 # =========================================================================== #
-# Description:        Rsync the production website to the staging server/website
-# Details:            Rsync Pull to simplify the script.
+# Description:        Rsync the production website to the staging server/website.
+# Details:            Rsync Pull, the script will run from the staging server.
 # Made for:           Linux, Cloudpanel (Debian & Ubuntu).
 # Requirements:       ssh-keygen - ssh-copy-id root@127.0.0.1 (replace IP)
 # Author:             WP Speed Expert
 # Author URI:         https://wpspeedexpert.com
-# Version:            0.5
-# Make executable:    chmod +x /home/staging/rsync-pull-production-to-staging.sh
-# Execute the script: sudo /home/staging/rsync-pull-production-to-staging.sh > /home/staging/rsync-pull-production-to-staging.log
-# Crontab @daily 2am: 0 2 * * * /home/staging/rsync-pull-production-to-staging.sh > /home/staging/rsync-pull-production-to-staging.log 2>&1
-# @weekly on sunday:  0 2 * * 7 /home/staging/rsync-pull-production-to-staging.sh > /home/staging/rsync-pull-production-to-staging.log 2>&1
+# Version:            0.6
+# Make executable:    chmod +x rsync-pull-production-to-staging.sh
+# Crontab @weekly:    0 0 * * MON /home/{PATH}/rsync-pull-production-to-staging.sh > /home/{PATH}/rsync-pull-production-to-staging.log 2>&1
 # =========================================================================== #
 #
-# Variables - Modify to match your situation
+# Variables
 PRODUCTION_URL=("production.domain.com")
 STAGING_URL=("staging.domain.com")
 #
@@ -62,6 +60,7 @@ find ${STAGING_PATH}/ -mindepth 1 ! -regex '^'${STAGING_PATH}'/wp-config.php' -d
 # Export the remote MySQL database |  ${PRODUCTION_PATH}
 echo "[+] NOTICE: Export the remote database: ${PRODUCTION_DATABASE}"
 ssh ${PRODUCTION_SERVER_SSH} "clpctl db:export --databaseName=${PRODUCTION_DATABASE} --file=${PRODUCTION_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz"
+#
 echo "[+] NOTICE: Synching the database: ${PRODUCTION_DATABASE}.sql.gz"
 rsync -azP ${PRODUCTION_SERVER_SSH}:${PRODUCTION_SCRIPT_PATH}/tmp/${PRODUCTION_DATABASE}.sql.gz ${STAGING_SCRIPT_PATH}/tmp
 
